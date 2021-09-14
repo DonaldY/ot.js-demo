@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DonaldY/ot.js-demo.git",
+    "url": "git+https://github.com/DonaldY/ot.js-demo.git"
   },
   "keywords": [
     "demo",
@@ -18,7 +18,6 @@
     "transformation",
     "OT"
   ],
-  "author": "YingshanDeng <yingshandeng@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/DonaldY/ot.js-demo/issues"
