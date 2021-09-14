@@ -54,7 +54,8 @@ EditorSocketIOServer.prototype.addClient = function (socket) {
       });
     })
     .on('disconnect', function () {
-      console.log("Disconnect");
+      console.log("Disconnect, docId: " + self.docId);
+
       socket.leave(self.docId);
       self.onDisconnect(socket);
       if (
