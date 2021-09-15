@@ -12,10 +12,14 @@ var util             = require('util');
 
 // 定义了对象
 function EditorSocketIOServer (document, operations, docId, mayWrite) {
+  // 1. 类似继承 EventEmitter， 可以直接获取 EventEmitter 的属性
   EventEmitter.call(this);
   Server.call(this, document, operations);
   this.users = {};
   this.docId = docId;
+  // 2. 若 mayWrite 有值，则赋值 mayWrite
+  //    若 mayWrite 无值，则赋值 方法
+  // 这里function，主要用于错误处理
   this.mayWrite = mayWrite || function (_, cb) { cb(true); };
 }
 
@@ -39,13 +43,13 @@ function extend (target, source) {
 EditorSocketIOServer.prototype.addClient = function (socket) {
   var self = this;
   socket
-    .join(this.docId)
-    .emit('doc', {
+    .join(this.docId) // 加入对应房间
+    .emit('doc', { // 广播消息
       str: this.document,
       revision: this.operations.length,
       clients: this.users
     })
-    .on('operation', function (revision, operation, selection) {
+    .on('operation', function (revision, operation, selection) { // 监听 operation 事件
       self.mayWrite(socket, function (mayWrite) {
         if (!mayWrite) {
           console.log("User doesn't have the right to edit.");
@@ -54,7 +58,7 @@ EditorSocketIOServer.prototype.addClient = function (socket) {
         self.onOperation(socket, revision, operation, selection);
       });
     })
-    .on('selection', function (obj) {
+    .on('selection', function (obj) { // 监听 selection 事件
       self.mayWrite(socket, function (mayWrite) {
         if (!mayWrite) {
           console.log("User doesn't have the right to edit.");
@@ -63,7 +67,7 @@ EditorSocketIOServer.prototype.addClient = function (socket) {
         self.updateSelection(socket, obj && Selection.fromJSON(obj));
       });
     })
-    .on('disconnect', function () {
+    .on('disconnect', function () { // 监听 disconnect 事件
       console.log("Disconnect, docId: " + self.docId);
 
       socket.leave(self.docId);
