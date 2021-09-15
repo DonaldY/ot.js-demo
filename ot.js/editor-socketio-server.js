@@ -1,12 +1,16 @@
 'use strict';
 
+// events 模块只提供了一个对象： events.EventEmitter。
+// EventEmitter 的核心就是事件触发与事件监听器功能的封装
 var EventEmitter     = require('events').EventEmitter;
 var TextOperation    = require('./text-operation');
 var WrappedOperation = require('./wrapped-operation');
 var Server           = require('./server');
 var Selection        = require('./selection');
+// util 是一个Node.js 核心模块，提供常用函数的集合，用于弥补核心 JavaScript 的功能 过于精简的不足。
 var util             = require('util');
 
+// 定义了对象
 function EditorSocketIOServer (document, operations, docId, mayWrite) {
   EventEmitter.call(this);
   Server.call(this, document, operations);
@@ -15,17 +19,23 @@ function EditorSocketIOServer (document, operations, docId, mayWrite) {
   this.mayWrite = mayWrite || function (_, cb) { cb(true); };
 }
 
+// 使 EditorSocketIOServer 继承 Server
 util.inherits(EditorSocketIOServer, Server);
+// 调用 extend 方法
 extend(EditorSocketIOServer.prototype, EventEmitter.prototype);
 
 function extend (target, source) {
+  // 遍历
   for (var key in source) {
+    // 是否有对应的 key
+    // 感觉这块判断就多余了，直接赋值就行
     if (source.hasOwnProperty(key)) {
       target[key] = source[key];
     }
   }
 }
 
+// 添加方法 addClient
 EditorSocketIOServer.prototype.addClient = function (socket) {
   var self = this;
   socket
@@ -67,6 +77,7 @@ EditorSocketIOServer.prototype.addClient = function (socket) {
     });
 };
 
+// 添加方法 onOperation
 EditorSocketIOServer.prototype.onOperation = function (socket, revision, operation, selection) {
   var wrapped;
   try {
@@ -94,6 +105,7 @@ EditorSocketIOServer.prototype.onOperation = function (socket, revision, operati
   }
 };
 
+// 添加方法 updateSelection
 EditorSocketIOServer.prototype.updateSelection = function (socket, selection) {
   var clientId = socket.id;
   if (selection) {
@@ -104,20 +116,24 @@ EditorSocketIOServer.prototype.updateSelection = function (socket, selection) {
   socket.broadcast['in'](this.docId).emit('selection', clientId, selection);
 };
 
+// 添加方法 setName
 EditorSocketIOServer.prototype.setName = function (socket, name) {
   var clientId = socket.id;
   this.getClient(clientId).name = name;
   socket.broadcast['in'](this.docId).emit('set_name', clientId, name);
 };
 
+// 添加方法 getClient
 EditorSocketIOServer.prototype.getClient = function (clientId) {
   return this.users[clientId] || (this.users[clientId] = {});
 };
 
+// 添加方法 onDisconnect
 EditorSocketIOServer.prototype.onDisconnect = function (socket) {
   var clientId = socket.id;
   delete this.users[clientId];
   socket.broadcast['in'](this.docId).emit('client_left', clientId);
 };
 
+// 对外提供，使其能被外界引用
 module.exports = EditorSocketIOServer;
