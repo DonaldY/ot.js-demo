@@ -19,7 +19,6 @@ function EditorSocketIOServer (document, operations, docId, mayWrite) {
   this.docId = docId;
   // 2. 若 mayWrite 有值，则赋值 mayWrite
   //    若 mayWrite 无值，则赋值 方法
-  // 这里function，主要用于错误处理
   this.mayWrite = mayWrite || function (_, cb) { cb(true); };
 }
 
