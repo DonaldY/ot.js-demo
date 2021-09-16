@@ -10,7 +10,7 @@ var Selection        = require('./selection');
 // util 是一个Node.js 核心模块，提供常用函数的集合，用于弥补核心 JavaScript 的功能 过于精简的不足。
 var util             = require('util');
 
-// 定义了对象
+// 构造函数继承
 function EditorSocketIOServer (document, operations, docId, mayWrite) {
   // 1. 类似继承 EventEmitter， 可以直接获取 EventEmitter 的属性
   EventEmitter.call(this);
