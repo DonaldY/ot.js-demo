@@ -23,12 +23,19 @@
   <textarea id="note"></textarea>
   <!-- init client -->
   <script>
+    <!-- 从 socket.io 这里创建 -->
     var socket = io()
+    <!-- 监听 doc的事件 -->
     socket.on('doc', function(data) {
+      <!-- 创建编辑器 -->
       var cm = CodeMirror.fromTextArea(document.getElementById('note'), {lineNumbers: true})
+      <!-- 设置数据。这里是全量数据？不是全量数据，那必定会指定位置吧！ -->
       cm.setValue(data.str)
+      <!-- 对 socket.io 的封装，处理一些事件 -->
       var serverAdapter = new ot.SocketIOAdapter(socket)
+      <!-- 略 -->
       var editorAdapter = new ot.CodeMirrorAdapter(cm)
+      <!-- 创建 editor-client -->
       var client = new ot.EditorClient(data.revision, data.clients, serverAdapter, editorAdapter)
     })
   </script>

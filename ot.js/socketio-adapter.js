@@ -1,5 +1,6 @@
 /*global ot */
 
+// (function(){…})() 和 (function(){…}()) 是两种 Javascript 立即执行函数的常见写法。
 ot.SocketIOAdapter = (function () {
   'use strict';
 
